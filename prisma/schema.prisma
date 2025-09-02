@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid()) @db.Uuid @unique
+  name       String
+  email      String   @unique
+  password   String
+  role       Role     @default(job_seeker)
+  phone      String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  profile    UserProfile?
+}
+
+model UserProfile {
+  id          String       @id @default(uuid()) @db.Uuid
+  user_id     String       @unique @db.Uuid
+  resume_url  String?
+  skills      String[]     @db.Text
+  linkedin    String?
+  portfolio   String?
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  experiences Experience[] // Relation to Experience model
+  educations  Education[]  // Relation to Education model
+}
+
+model Experience {
+  id          String      @id @default(uuid()) @db.Uuid
+  userProfileId String    @db.Uuid
+  companyName String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  userProfile UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id          String      @id @default(uuid()) @db.Uuid
+  userProfileId String    @db.Uuid
+  school      String
+  duration    String?     // e.g., "2018 - 2022"
+  cgpa        Float?
+  description String?
+  userProfile UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  job_seeker
+  employer
+  admin
+}
