@@ -11,7 +11,7 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { email, name, password } = req.body;
+  const { email, name, password, role } = req.body;
   try {
 
     const existingUser = await prisma.user.findUnique({
@@ -29,6 +29,7 @@ export const signup = async (
         email,
         name,
         password: hashedPassword,
+        role
       },
     });
 

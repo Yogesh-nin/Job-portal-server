@@ -26,7 +26,7 @@ const educationSchema = Joi.object({
     'any.required': 'School name is required',
   }),
   duration: Joi.string().allow('').optional(),
-  cgpa: Joi.number().min(0).max(4.0).allow(null).optional().messages({
+  cgpa: Joi.number().min(0).max(10.0).allow(null).optional().messages({
     'number.min': 'CGPA must be at least 0',
     'number.max': 'CGPA must not exceed 4.0',
   }),

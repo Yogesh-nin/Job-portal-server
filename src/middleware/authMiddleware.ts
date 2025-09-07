@@ -22,12 +22,12 @@ export const authMiddleware = async (
 
     next();
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ message: "Unauthorized: Token expired" });
-    }
-    if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ message: "Unauthorized: Invalid token" });
-    }
+    // if (error instanceof jwt.TokenExpiredError) {
+    //   return res.status(401).json({ message: "Unauthorized: Token expired" });
+    // }
+    // if (error instanceof jwt.JsonWebTokenError) {
+    //   return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    // }
 
     next(error)
 

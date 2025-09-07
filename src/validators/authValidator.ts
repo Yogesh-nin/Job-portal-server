@@ -1,5 +1,6 @@
 import Joi from "joi";
 import type { Request, Response, NextFunction } from "express";
+import { Role } from "../generated/prisma/index.js";
 
 // 🔹 Signup validation schema
 export const signupSchema = Joi.object({
@@ -20,7 +21,7 @@ export const signupSchema = Joi.object({
   phone: Joi.string().pattern(/^[0-9]{10}$/).optional().messages({
     "string.pattern.base": "Phone must be a valid 10-digit number",
   }),
-  role: Joi.string().valid("job_seeker", "employer", "admin").default("job_seeker"),
+  role: Joi.string().valid(...Object.values(Role)).default("job_seeker"),
 });
 
 // 🔹 Login validation schema

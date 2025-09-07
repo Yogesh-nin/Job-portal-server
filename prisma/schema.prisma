@@ -25,12 +25,14 @@ model User {
   updated_at DateTime @updatedAt
 
   profile    UserProfile?
+  jobs       Job[]
 }
 
 model UserProfile {
   id          String       @id @default(uuid()) @db.Uuid
   user_id     String       @unique @db.Uuid
   resume_url  String?
+  description String?
   skills      String[]     @db.Text
   linkedin    String?
   portfolio   String?
@@ -60,8 +62,64 @@ model Education {
   userProfile UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
 }
 
+model Job {
+  id          String      @id @default(uuid()) @db.Uuid
+  title       String
+  jobRole     String
+  tags        String[]
+  minSalary   Float?
+  maxSalary   Float?
+  salaryType  SalaryType?
+  education   String
+  experience  String
+  jobType     JobType
+  vacancy     Int?
+  expirationDate DateTime?
+  jobLevel    JobLevel?
+  country     String?
+  city        String?
+  isRemote    Boolean
+  jobBenefits String[]
+  description String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  userId String   @db.Uuid
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum Role {
   job_seeker
   employer
   admin
+}
+
+enum SalaryType {
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  TEMPORARY
+  FREELANCE
+  REMOTE
+}
+
+enum JobLevel {
+  INTERN
+  ENTRY_LEVEL
+  JUNIOR
+  MID_LEVEL
+  SENIOR
+  LEAD
+  MANAGER
+  DIRECTOR
+  EXECUTIVE
 }
