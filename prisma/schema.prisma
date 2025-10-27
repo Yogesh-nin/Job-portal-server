@@ -26,6 +26,9 @@ model User {
 
   profile    UserProfile?
   jobs       Job[]
+
+  companyId String?  @db.Uuid
+  company   Company? @relation(fields: [companyId], references: [id])
 }
 
 model UserProfile {
@@ -86,6 +89,55 @@ model Job {
 
   userId String   @db.Uuid
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyId String   @db.Uuid
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+
+model Industry {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relation to companies
+  companies Company[]
+
+  
+}
+
+model Company{
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String
+  aboutUs     String?
+  organizationType OrganizationType
+  industry    Industry?  @relation(fields: [industryId], references: [id])
+  industryId  String @db.Uuid
+  teamSize    TeamSize
+  foundedAt    DateTime?
+  company_url   String
+  vision        String?
+  socialLinks   SocialLink[]
+  email         String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  jobs      Job[]
+  users     User[]
+
+}
+
+
+model SocialLink {
+  id        String  @id @default(uuid()) @db.Uuid
+  platform  String   // e.g., "LinkedIn", "Twitter"
+  url       String
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId String @db.Uuid
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 enum Role {
@@ -122,4 +174,28 @@ enum JobLevel {
   MANAGER
   DIRECTOR
   EXECUTIVE
+}
+
+enum OrganizationType {
+  PRIVATE_COMPANY
+  PUBLIC_COMPANY
+  GOVERNMENT_ORGANIZATION
+  NGO
+  EDUCATIONAL_INSTITUTION
+  STARTUP
+  PARTNERSHIP_FIRM
+  SOLE_PROPRIETORSHIP
+  MNC
+  FREELANCER_INDIVIDUAL
+}
+
+enum TeamSize {
+  SIZE_1_10        // 1–10 employees
+  SIZE_11_50       // 11–50 employees
+  SIZE_51_200      // 51–200 employees
+  SIZE_201_500     // 201–500 employees
+  SIZE_501_1000    // 501–1000 employees
+  SIZE_1001_5000   // 1001–5000 employees
+  SIZE_5001_10000  // 5001–10,000 employees
+  SIZE_10000_PLUS  // 10,000+ employees
 }

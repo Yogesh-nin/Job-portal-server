@@ -9,16 +9,27 @@ export const createJob = async (
   res: Response,
   next: NextFunction
 ) => {
-  const id = req.user.id;
+  const userId = req.user.id;
   const jobPayload = req.body as Job;
   try {
-    if (!id) {
+    if (!userId) {
       throw new AppError("Unauthorized: User not authenticated", 401);
     }
+
+     const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { companyId: true },
+    });
+
+    if(!user?.companyId){
+      throw new AppError("User is not registered with any organization", 404);
+    }
+
     const job = await prisma.job.create({
       data: {
         ...jobPayload,
-        userId: id,
+        userId,
+        companyId: user?.companyId
       },
     });
 
